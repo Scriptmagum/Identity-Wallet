@@ -82,7 +82,7 @@ Portefeuille d'identité numérique Android. Stocke une identité fictive chiffr
 
 ```bash
 # 1. Cloner le repository
-git clone https://github.com/Scriptmagum/identity-wallet-android.git
+git clone https://github.com/Scriptmagum/Identity-Wallet.git
 
 # 2. Ouvrir dans Android Studio
 # File > Open > sélectionner le dossier
