@@ -1,5 +1,5 @@
 
-# Identity Wallet — Android (Kotlin / Jetpack Compose)
+# Identity Wallet — Android (Kotlin / View System)
 
 ## Aperçu
 
@@ -10,18 +10,28 @@ Portefeuille d'identité numérique Android. Stocke une identité fictive chiffr
 ## Architecture
 
 ```
-┌─────────────────┐     ┌──────────────────┐     ┌─────────────────┐
-│  UI (Compose)   │────▶│  ViewModel       │────▶│  Repository     │
-│  - Formulaire   │     │  - État app      │     │  - Keystore     │
-│  - QR Code      │     │  - Logique métier│     │  - Chiffrement  │
-│  - Vérification │     │                  │     │  - Signature    │
-└─────────────────┘     └──────────────────┘     └─────────────────┘
-                                                          │
-                                                          ▼
-                                                  ┌─────────────────┐
-                                                  │  Android Keystore│
-                                                  │  (TEE / StrongBox)│
-                                                  └─────────────────┘
+┌──────────────────────────────┐
+│       Activities (UI)        │
+│  MainActivity (liste)        │
+│  CreateCredentialActivity    │
+│  QrDisplayActivity           │
+└──────┬───────────────────────┘
+       │ appel
+┌──────▼───────────────────────┐
+│    CredentialRepository      │  ← Façade unique
+│    (data layer)              │
+└──┬───────┬────────┬─────────┘
+   │       │        │
+   ▼       ▼        ▼
+Keystore  Crypto   Credential
+Manager   Utils    Storage
+(Android  (AES-    (SharedPrefs
+ Keystore  GCM +    → JSON
+ TEE/      ECDSA)   déjà chiffré)
+ StrongBox)
+   │
+   ▼
+ MockCA (mémoire)
 ```
 
 ---
@@ -30,8 +40,8 @@ Portefeuille d'identité numérique Android. Stocke une identité fictive chiffr
 
 - **Création d'identité** (JSON) → chiffrée AES-GCM → stockée localement
 - **Déverrouillage biométrique** (BiometricPrompt)
-- **Présentation via QR Code** : `{ data, signature ECDSA, certificat }`
-- **Vérification de signature** (mode lecteur)
+- **Présentation via QR Code** (ZXing) : `{ data, timestamp, nonce, signature ECDSA, certificat }`
+- **Compte à rebours** de 2 min sur le QR (anti-rejeu)
 
 ---
 
@@ -49,10 +59,11 @@ Portefeuille d'identité numérique Android. Stocke une identité fictive chiffr
 ## Stack technique
 
 - **Langage** : Kotlin
-- **UI** : Jetpack Compose, Material 3
-- **Architecture** : MVVM, Coroutines, StateFlow
-- **Sécurité** : Android Keystore, BiometricPrompt, AES-GCM, ECDSA (Bouncy Castle / Conscrypt)
-- **Stockage** : Room (SQLite) / DataStore
+- **UI** : View System (XML layouts), AppCompatActivity, ListView, Material FAB
+- **Architecture** : Activities + Repository + Keystore
+- **Sécurité** : Android Keystore, BiometricPrompt, AES-GCM, ECDSA
+- **Stockage** : SharedPreferences (JSON sérialisé, données déjà chiffrées)
+- **QR Code** : ZXing (com.google.zxing + journeyapps barcode scanner)
 
 ---
 
@@ -60,8 +71,8 @@ Portefeuille d'identité numérique Android. Stocke une identité fictive chiffr
 
 | Type | Outil | Cible |
 |------|-------|-------|
-| Unitaires | JUnit + MockK | ViewModel + Repository |
-| UI | Compose UI Test | Écrans formulaire et QR |
+| Unitaires | JUnit + MockK | Repository |
+| UI | Espresso | Activities |
 | Intégration | Instrumented tests | Keystore + chiffrement |
 
 ---
@@ -70,11 +81,12 @@ Portefeuille d'identité numérique Android. Stocke une identité fictive chiffr
 
 > Version simplifiée (POC). Dans un déploiement réel :
 
-- [ ] La clé publique serait certifiée par une autorité (backend)
-- [ ] Le QR embarquerait un certificat signé (X.509)
+- [ ] La clé privée CA ne serait pas en mémoire dans l'app
+- [ ] Le QR embarquerait un vrai certificat X.509 (pas un format custom)
 - [ ] Les données seraient synchronisées entre appareils
 - [ ] Ajout d'un mécanisme de révocation
 - [ ] Conformité EUDI Wallet (ARF/ARC)
+- [ ] Migrer vers Jetpack Compose + ViewModel + Room
 
 ---
 
