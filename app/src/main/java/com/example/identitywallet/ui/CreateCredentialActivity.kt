@@ -31,7 +31,42 @@ class CreateCredentialActivity : AppCompatActivity() {
         )
 
         findViewById<Button>(com.example.identitywallet.R.id.button_create).setOnClickListener {
-            createCredential(spinnerType)
+            val nom = findViewById<EditText>(com.example.identitywallet.R.id.edit_nom).text.toString()
+            val prenom = findViewById<EditText>(com.example.identitywallet.R.id.edit_prenom).text.toString()
+            val dateNaissance = findViewById<EditText>(com.example.identitywallet.R.id.edit_date_naissance).text.toString()
+            val nationalite = findViewById<EditText>(com.example.identitywallet.R.id.edit_nationalite).text.toString()
+            val numeroDocument = findViewById<EditText>(com.example.identitywallet.R.id.edit_numero_document).text.toString()
+
+            if (nom.isBlank() || prenom.isBlank()) {
+                Toast.makeText(this, "Nom et prénom sont obligatoires", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            val progressBar = findViewById<ProgressBar>(com.example.identitywallet.R.id.progress_bar)
+            progressBar.visibility = View.VISIBLE
+
+            val spinnerType = findViewById<Spinner>(com.example.identitywallet.R.id.spinner_type)
+            val type = CredentialType.entries[spinnerType.selectedItemPosition]
+            val identityData = IdentityData(nom, prenom, dateNaissance, nationalite, numeroDocument)
+
+            BiometricAuthHelper.authenticate(
+                activity = this,
+                onSuccess = {
+                    try {
+                        repository.createCredential(type, identityData)
+                        progressBar.visibility = View.GONE
+                        Toast.makeText(this, "Document créé et certifié ✅", Toast.LENGTH_SHORT).show()
+                        finish()
+                    } catch (e: Exception) {
+                        progressBar.visibility = View.GONE
+                        Toast.makeText(this, "Erreur : ${e.message}", Toast.LENGTH_LONG).show()
+                    }
+                },
+                onError = { message ->
+                    progressBar.visibility = View.GONE
+                    Toast.makeText(this, "Authentification échouée : $message", Toast.LENGTH_LONG).show()
+                }
+            )
         }
     }
 
