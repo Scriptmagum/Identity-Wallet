@@ -30,6 +30,17 @@
         <activity
             android:name=".ui.QrDisplayActivity"
             android:exported="false" />
+
+        <activity
+            android:name=".ui.SquareCaptureActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:stateNotNeeded="true"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name=".ui.ScanVerifyActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

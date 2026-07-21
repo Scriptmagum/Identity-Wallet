@@ -59,7 +59,19 @@ class CredentialRepository(context: Context) {
     fun getById(id: String): CredentialEntity? = storage.loadAll().find { it.id == id }
 
     fun deleteById(id: String) {
+        removeFromStorage(id)
+        deleteKeys(id)
+    }
+
+    fun removeFromStorage(id: String) {
         storage.deleteById(id)
+    }
+
+    fun restoreEntity(entity: CredentialEntity) {
+        storage.add(entity)
+    }
+
+    fun deleteKeys(id: String) {
         KeystoreManager.deleteKey("cred_${id}_ecdsa")
         KeystoreManager.deleteKey("cred_${id}_aes")
     }

@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorSurface"
-        app:title="Présenter"
+        app:title="Vérifier un QR"
         app:titleTextAppearance="@style/TextAppearance.Material3.TitleLarge"
         app:navigationIcon="?attr/homeAsUpIndicator"
         app:navigationContentDescription="Retour" />
@@ -19,41 +19,25 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
         android:orientation="vertical"
+        android:gravity="center"
         android:padding="24dp">
 
-        <androidx.cardview.widget.CardView
-            android:layout_width="280dp"
-            android:layout_height="280dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="6dp">
-
-            <ImageView
-                android:id="@+id/image_qr"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:contentDescription="QR code de présentation"
-                android:padding="12dp" />
-        </androidx.cardview.widget.CardView>
+        <Button
+            android:id="@+id/button_launch_scan"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Scanner un QR" />
 
         <TextView
-            android:id="@+id/text_countdown"
-            android:layout_width="wrap_content"
+            android:id="@+id/text_result"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:text="Expire dans 2:00" />
+            android:layout_marginTop="32dp"
+            android:textSize="20sp"
+            android:gravity="center"
+            android:text="" />
 
-        <Button
-            android:id="@+id/button_done"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="Terminer"
-            android:visibility="gone" />
     </LinearLayout>
 
 </LinearLayout>

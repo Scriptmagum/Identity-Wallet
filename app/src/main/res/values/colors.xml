@@ -2,4 +2,10 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="card_id">#1565C0</color>
+    <color name="card_driving">#2E7D32</color>
+    <color name="card_student">#6A1B9A</color>
+    <color name="card_certified">#2E7D32</color>
+    <color name="card_invalid">#C62828</color>
+    <color name="card_bg">#F5F5F5</color>
 </resources>
